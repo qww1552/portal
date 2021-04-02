@@ -3,13 +3,14 @@ package kr.ac.jejunu;
 import java.sql.*;
 
 public class UserDao {
+    private final ConnectionMaker connectionMaker;
+
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
+    }
 
     public User findById(Integer id) throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection =
-            DriverManager
-                .getConnection("jdbc:mysql://localhost/portal?characterEncoding=utf-8&serverTimezone=UTC"
-                ,"root","1234");
+        Connection connection = connectionMaker.getConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT * FROM userinfo WHERE id=?"
         );
@@ -29,11 +30,7 @@ public class UserDao {
     }
 
     public void insert(User user) throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection =
-                DriverManager
-                        .getConnection("jdbc:mysql://localhost/portal?characterEncoding=utf-8&serverTimezone=UTC"
-                                ,"root","1234");
+        Connection connection = connectionMaker.getConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "insert into userinfo (name, password) values (?, ?)",
                 Statement.RETURN_GENERATED_KEYS
