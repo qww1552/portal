@@ -13,10 +13,8 @@ public class UserDao {
     public User findById(Integer id) throws SQLException {
         User user=null;
         try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM userinfo WHERE id=?"
-            );
-            ps.setInt(1, id);
+            StatementStrategy statementStrategy = new FindByIdStatementStrategy();
+            PreparedStatement ps = statementStrategy.makeStatement(id, connection);
             ResultSet resultSet = ps.executeQuery();
 
             if (resultSet.next()) {
@@ -35,13 +33,8 @@ public class UserDao {
 
     public void insert(User user) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(
-                    "insert into userinfo (name, password) values (?, ?)",
-                    Statement.RETURN_GENERATED_KEYS
-            );
-            ps.setString(1, user.getName());
-            ps.setString(2, user.getPassword());
-
+            StatementStrategy statementStrategy = new InsertStatementStrategy();
+            PreparedStatement ps = statementStrategy.makeStatement(user, connection);
             ps.executeUpdate();
 
             ResultSet resultSet = ps.getGeneratedKeys();
@@ -51,33 +44,23 @@ public class UserDao {
 
             resultSet.close();
             ps.close();
-
         }
     }
 
     public void update(User user) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(
-                    "update userinfo set name=?, password=? where id=?",
-                    Statement.RETURN_GENERATED_KEYS
-            );
-            ps.setString(1, user.getName());
-            ps.setString(2, user.getPassword());
-            ps.setInt(3,user.getId());
+            StatementStrategy statementStrategy = new UpdateStatementStrategy();
+            PreparedStatement ps = statementStrategy.makeStatement(user, connection);
             ps.executeUpdate();
 
             ps.close();
-
         }
     }
 
     public void delete(Integer id) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(
-                    "delete from userinfo where id=?",
-                    Statement.RETURN_GENERATED_KEYS
-            );
-            ps.setInt(1,id);
+            StatementStrategy statementStrategy = new DeleteStatementStrategy();
+            PreparedStatement ps = statementStrategy.makeStatement(id, connection);
             ps.executeUpdate();
 
             ps.close();
