@@ -5,9 +5,15 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class FindByIdStatementStrategy implements StatementStrategy {
+    private final Integer id;
+
+    public FindByIdStatementStrategy(Integer id) {
+        this.id = id;
+    }
+
     @Override
-    public PreparedStatement makeStatement(Object object, Connection connection) throws SQLException {
-        Integer id = (Integer) object;
+    public PreparedStatement makeStatement(Connection connection) throws SQLException {
+
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT * FROM userinfo WHERE id=?"
         );
