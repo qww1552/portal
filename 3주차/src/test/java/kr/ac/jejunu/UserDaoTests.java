@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.sql.SQLException;
 
@@ -17,7 +18,10 @@ public class UserDaoTests {
 
     @BeforeAll
     public static void setUp() {
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(DaoFactory.class);
+//        ApplicationContext applicationContext
+//                = new AnnotationConfigApplicationContext(DaoFactory.class);
+        ClassPathXmlApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("daoFactory.xml");
         userDao = applicationContext.getBean("userDao", UserDao.class);
     }
 
